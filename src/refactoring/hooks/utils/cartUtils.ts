@@ -4,7 +4,12 @@ export const findApplicableDiscount = (
   discounts: Discount[],
   quantity: number
 ) => {
-  return discounts.find((discount) => quantity >= discount.quantity);
+  return discounts.filter((discount) => quantity >= discount.quantity).reduce((maxDiscount, currentDiscount) => {
+    if (!maxDiscount || currentDiscount.rate > maxDiscount.rate) {
+      return currentDiscount;
+    }
+    return maxDiscount;
+  }, undefined as Discount | undefined);
 };
 
 export const calculateDiscountedPrice = (
@@ -34,7 +39,7 @@ export const calculateCartTotal = (
   selectedCoupon: Coupon | null
 ) => {
   const totalBeforeDiscount = cart.reduce(
-    (total, item) => total + calculateItemTotal(item),
+    (total, item) => total + (item.product.price * item.quantity),
     0
   );
   let totalDiscount = cart.reduce(
