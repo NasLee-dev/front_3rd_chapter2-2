@@ -1,13 +1,19 @@
 // useCart.ts
 import { useState } from "react";
 import { CartItem, Coupon, Product } from "../../types";
-import { calculateCartTotal, updateCartItemQuantity } from "./utils/cartUtils";
+import {
+  calculateCartTotal,
+  getRemainingStock,
+  updateCartItemQuantity,
+} from "./utils/cartUtils";
 
 export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const addToCart = (product: Product) => {
+    const remainingStock = getRemainingStock(cart, product);
+    if (remainingStock <= 0) return;
     const existingItem = cart.find((item) => item.product.id === product.id);
     if (existingItem) {
       const newQuantity = existingItem.quantity + 1;
@@ -24,8 +30,7 @@ export const useCart = () => {
   };
 
   const updateQuantity = (productId: string, newQuantity: number) => {
-    const updatedCart = updateCartItemQuantity(cart, productId, newQuantity);
-    setCart(updatedCart);
+    setCart((prev) => updateCartItemQuantity(prev, productId, newQuantity));
   };
 
   const applyCoupon = (coupon: Coupon) => {
