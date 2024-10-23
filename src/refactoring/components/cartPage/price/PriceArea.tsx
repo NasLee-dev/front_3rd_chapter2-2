@@ -1,9 +1,9 @@
-import TitleText from "../title";
+import TitleText from '../title'
 
 interface IPriceAreaProps {
-  totalBeforeDiscount: number;
-  totalAfterDiscount: number;
-  totalDiscount: number;
+  totalBeforeDiscount: number
+  totalAfterDiscount: number
+  totalDiscount: number
 }
 
 export default function PriceArea({
@@ -13,7 +13,7 @@ export default function PriceArea({
 }: IPriceAreaProps) {
   return (
     <div className="mt-6 bg-white p-4 rounded shadow">
-      <TitleText title={"주문 요약"} />
+      <TitleText isTitle={true} titleText={'주문 요약'} />
       <div className="space-y-1">
         <p>상품 금액: {totalBeforeDiscount.toLocaleString()}원</p>
         <p className="text-green-600">
@@ -24,5 +24,5 @@ export default function PriceArea({
         </p>
       </div>
     </div>
-  );
+  )
 }

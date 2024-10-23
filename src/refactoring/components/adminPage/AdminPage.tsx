@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Coupon, Discount, Product } from "../../../types";
+import { Coupon, Product } from '../../../types'
+import useAccordion from '../../hooks/admin/useAccordion'
+import useProductManagement from '../../hooks/admin/useProductManagement'
+import useCouponManagement from '../../hooks/admin/useCouponManagement'
 
 interface Props {
-  products: Product[];
-  coupons: Coupon[];
-  onProductUpdate: (updatedProduct: Product) => void;
-  onProductAdd: (newProduct: Product) => void;
-  onCouponAdd: (newCoupon: Coupon) => void;
+  products: Product[]
+  coupons: Coupon[]
+  onProductUpdate: (updatedProduct: Product) => void
+  onProductAdd: (newProduct: Product) => void
+  onCouponAdd: (newCoupon: Coupon) => void
 }
 
 export const AdminPage = ({
@@ -16,122 +18,28 @@ export const AdminPage = ({
   onProductAdd,
   onCouponAdd,
 }: Props) => {
-  const [openProductIds, setOpenProductIds] = useState<Set<string>>(new Set());
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [newDiscount, setNewDiscount] = useState<Discount>({
-    quantity: 0,
-    rate: 0,
-  });
-  const [newCoupon, setNewCoupon] = useState<Coupon>({
-    name: "",
-    code: "",
-    discountType: "percentage",
-    discountValue: 0,
-  });
-  const [showNewProductForm, setShowNewProductForm] = useState(false);
-  const [newProduct, setNewProduct] = useState<Omit<Product, "id">>({
-    name: "",
-    price: 0,
-    stock: 0,
-    discounts: [],
-  });
+  const { openProductIds, toggleProductAccordion } = useAccordion()
+  const {
+    editProduct: editingProduct,
+    newDiscount,
+    showNewProductForm,
+    newProduct,
+    setNewProduct,
+    setNewDiscount,
+    setShowNewProductForm,
+    handleEditProduct,
+    handleProductNameUpdate,
+    handlePriceUpdate,
+    handleEditComplete,
+    handleStockUpdate,
+    handleAddDiscount,
+    handleRemoveDiscount,
+    handleAddNewProduct,
+  } = useProductManagement({ onProductUpdate, onProductAdd })
 
-  const toggleProductAccordion = (productId: string) => {
-    setOpenProductIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(productId)) {
-        newSet.delete(productId);
-      } else {
-        newSet.add(productId);
-      }
-      return newSet;
-    });
-  };
-
-  // handleEditProduct 함수 수정
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct({ ...product });
-  };
-
-  // 새로운 핸들러 함수 추가
-  const handleProductNameUpdate = (productId: string, newName: string) => {
-    if (editingProduct && editingProduct.id === productId) {
-      const updatedProduct = { ...editingProduct, name: newName };
-      setEditingProduct(updatedProduct);
-    }
-  };
-
-  // 새로운 핸들러 함수 추가
-  const handlePriceUpdate = (productId: string, newPrice: number) => {
-    if (editingProduct && editingProduct.id === productId) {
-      const updatedProduct = { ...editingProduct, price: newPrice };
-      setEditingProduct(updatedProduct);
-    }
-  };
-
-  // 수정 완료 핸들러 함수 추가
-  const handleEditComplete = () => {
-    if (editingProduct) {
-      onProductUpdate(editingProduct);
-      setEditingProduct(null);
-    }
-  };
-
-  const handleStockUpdate = (productId: string, newStock: number) => {
-    const updatedProduct = products.find((p) => p.id === productId);
-    if (updatedProduct) {
-      const newProduct = { ...updatedProduct, stock: newStock };
-      onProductUpdate(newProduct);
-      setEditingProduct(newProduct);
-    }
-  };
-
-  const handleAddDiscount = (productId: string) => {
-    const updatedProduct = products.find((p) => p.id === productId);
-    if (updatedProduct && editingProduct) {
-      const newProduct = {
-        ...updatedProduct,
-        discounts: [...updatedProduct.discounts, newDiscount],
-      };
-      onProductUpdate(newProduct);
-      setEditingProduct(newProduct);
-      setNewDiscount({ quantity: 0, rate: 0 });
-    }
-  };
-
-  const handleRemoveDiscount = (productId: string, index: number) => {
-    const updatedProduct = products.find((p) => p.id === productId);
-    if (updatedProduct) {
-      const newProduct = {
-        ...updatedProduct,
-        discounts: updatedProduct.discounts.filter((_, i) => i !== index),
-      };
-      onProductUpdate(newProduct);
-      setEditingProduct(newProduct);
-    }
-  };
-
-  const handleAddCoupon = () => {
-    onCouponAdd(newCoupon);
-    setNewCoupon({
-      name: "",
-      code: "",
-      discountType: "percentage",
-      discountValue: 0,
-    });
-  };
-
-  const handleAddNewProduct = () => {
-    const productWithId = { ...newProduct, id: Date.now().toString() };
-    onProductAdd(productWithId);
-    setNewProduct({
-      name: "",
-      price: 0,
-      stock: 0,
-      discounts: [],
-    });
-    setShowNewProductForm(false);
-  };
+  const { newCoupon, setNewCoupon, handleAddCoupon } = useCouponManagement({
+    onCouponAdd,
+  })
 
   return (
     <div className="container mx-auto p-4">
@@ -140,10 +48,10 @@ export const AdminPage = ({
         <div>
           <h2 className="text-2xl font-semibold mb-4">상품 관리</h2>
           <button
-            onClick={() => setShowNewProductForm(!showNewProductForm)}
             className="bg-green-500 text-white px-4 py-2 rounded mb-4 hover:bg-green-600"
+            onClick={() => setShowNewProductForm(!showNewProductForm)}
           >
-            {showNewProductForm ? "취소" : "새 상품 추가"}
+            {showNewProductForm ? '취소' : '새 상품 추가'}
           </button>
           {showNewProductForm && (
             <div className="bg-white p-4 rounded shadow mb-4">
@@ -239,7 +147,7 @@ export const AdminPage = ({
                             onChange={(e) =>
                               handleProductNameUpdate(
                                 product.id,
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="w-full p-2 border rounded"
@@ -253,7 +161,7 @@ export const AdminPage = ({
                             onChange={(e) =>
                               handlePriceUpdate(
                                 product.id,
-                                parseInt(e.target.value)
+                                parseInt(e.target.value),
                               )
                             }
                             className="w-full p-2 border rounded"
@@ -267,7 +175,7 @@ export const AdminPage = ({
                             onChange={(e) =>
                               handleStockUpdate(
                                 product.id,
-                                parseInt(e.target.value)
+                                parseInt(e.target.value),
                               )
                             }
                             className="w-full p-2 border rounded"
@@ -284,7 +192,7 @@ export const AdminPage = ({
                               className="flex justify-between items-center mb-2"
                             >
                               <span>
-                                {discount.quantity}개 이상 구매 시{" "}
+                                {discount.quantity}개 이상 구매 시{' '}
                                 {discount.rate * 100}% 할인
                               </span>
                               <button
@@ -342,7 +250,7 @@ export const AdminPage = ({
                         {product.discounts.map((discount, index) => (
                           <div key={index} className="mb-2">
                             <span>
-                              {discount.quantity}개 이상 구매 시{" "}
+                              {discount.quantity}개 이상 구매 시{' '}
                               {discount.rate * 100}% 할인
                             </span>
                           </div>
@@ -390,7 +298,7 @@ export const AdminPage = ({
                   onChange={(e) =>
                     setNewCoupon({
                       ...newCoupon,
-                      discountType: e.target.value as "amount" | "percentage",
+                      discountType: e.target.value as 'amount' | 'percentage',
                     })
                   }
                   className="w-full p-2 border rounded"
@@ -428,9 +336,9 @@ export const AdminPage = ({
                     className="bg-gray-100 p-2 rounded"
                   >
                     {coupon.name} ({coupon.code}):
-                    {coupon.discountType === "amount"
+                    {coupon.discountType === 'amount'
                       ? `${coupon.discountValue}원`
-                      : `${coupon.discountValue}%`}{" "}
+                      : `${coupon.discountValue}%`}{' '}
                     할인
                   </div>
                 ))}
@@ -440,5 +348,5 @@ export const AdminPage = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

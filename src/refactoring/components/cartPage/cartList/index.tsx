@@ -1,14 +1,14 @@
-import { Coupon, Product } from "../../../../types";
-import { useCart } from "../../../hooks";
-import PriceArea from "../price/PriceArea";
-import TitleText from "../title";
-import CartProductList from "./CartProductList";
-import CouponArea from "./CouponArea";
-import ProductList from "./ProductList";
+import { Coupon, Product } from '../../../../types'
+import { useCart } from '../../../hooks'
+import PriceArea from '../price/PriceArea'
+import TitleText from '../title'
+import CartProductList from './CartProductList'
+import CouponArea from './CouponArea'
+import ProductList from './ProductList'
 
 interface ICartListProps {
-  products: Product[];
-  coupons: Coupon[];
+  products: Product[]
+  coupons: Coupon[]
 }
 
 export default function CartList({ products, coupons }: ICartListProps) {
@@ -20,17 +20,17 @@ export default function CartList({ products, coupons }: ICartListProps) {
     applyCoupon,
     calculateTotal,
     selectedCoupon,
-  } = useCart();
+  } = useCart()
   const { totalBeforeDiscount, totalAfterDiscount, totalDiscount } =
-    calculateTotal();
+    calculateTotal()
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <TitleText title={"상품 목록"} />
+        <TitleText isTitle={false} titleText={'상품 목록'} />
         <ProductList products={products} cart={cart} addToCart={addToCart} />
       </div>
       <div>
-        <TitleText title={"장바구니 내역"} />
+        <TitleText isTitle={false} titleText={'장바구니 내역'} />
         <CartProductList
           cart={cart}
           updateQuantity={updateQuantity}
@@ -50,5 +50,5 @@ export default function CartList({ products, coupons }: ICartListProps) {
         />
       </div>
     </div>
-  );
+  )
 }

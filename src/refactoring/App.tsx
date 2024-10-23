@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { CartPage } from "./components/cartPage/CartPage.tsx";
-import { AdminPage } from "./components/AdminPage.tsx";
-import { useCoupons, useProducts } from "./hooks";
-import { INITIAL_COUPONS } from "./constants/Coupon.ts";
-import { INITIAL_PRODUCTS } from "./constants/Products.ts";
+import { useState } from 'react'
+import { CartPage } from './components/cartPage/CartPage.tsx'
+import { useCoupons, useProducts } from './hooks'
+import { INITIAL_COUPONS } from './constants/Coupon.ts'
+import { INITIAL_PRODUCTS } from './constants/Products.ts'
+import { AdminPage } from './components/adminPage/AdminPage.tsx'
 
 const App = () => {
-  const { products, updateProduct, addProduct } = useProducts(INITIAL_PRODUCTS);
-  const { coupons, addCoupon } = useCoupons(INITIAL_COUPONS);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { products, updateProduct, addProduct } = useProducts(INITIAL_PRODUCTS)
+  const { coupons, addCoupon } = useCoupons(INITIAL_COUPONS)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -19,7 +19,7 @@ const App = () => {
             onClick={() => setIsAdmin(!isAdmin)}
             className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100"
           >
-            {isAdmin ? "장바구니 페이지로" : "관리자 페이지로"}
+            {isAdmin ? '장바구니 페이지로' : '관리자 페이지로'}
           </button>
         </div>
       </nav>
@@ -37,7 +37,7 @@ const App = () => {
         )}
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

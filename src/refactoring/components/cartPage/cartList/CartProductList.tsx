@@ -1,10 +1,10 @@
-import { CartItem } from "../../../../types";
-import { getMaxApplicableDiscount } from "../../../hooks/utils/cartUtils";
+import { CartItem } from '../../../../types'
+import { getMaxApplicableDiscount } from '../../../hooks/utils/cartUtils'
 
 interface ICartProductListProps {
-  cart: CartItem[];
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  cart: CartItem[]
+  updateQuantity: (productId: string, quantity: number) => void
+  removeFromCart: (productId: string) => void
 }
 
 export default function CartProductList({
@@ -15,7 +15,7 @@ export default function CartProductList({
   return (
     <div className="space-y-2">
       {cart.map((item) => {
-        const appliedDiscount = getMaxApplicableDiscount(item);
+        const appliedDiscount = getMaxApplicableDiscount(item)
         return (
           <div
             key={item.product.id}
@@ -58,8 +58,8 @@ export default function CartProductList({
               </button>
             </div>
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }
