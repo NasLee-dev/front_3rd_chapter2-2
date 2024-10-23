@@ -1,6 +1,6 @@
 import { Coupon, Product } from '../../../types.ts'
 import CartList from './cartList/index.tsx'
-import TitleText from './title/index.tsx'
+import TitleText from '../title/index.tsx'
 
 interface ICartPageProps {
   products: Product[]

@@ -1,4 +1,4 @@
-import TitleText from '../title'
+import TitleText from '../../title'
 
 interface IPriceAreaProps {
   totalBeforeDiscount: number

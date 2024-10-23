@@ -1,7 +1,7 @@
 import { Coupon, Product } from '../../../../types'
 import { useCart } from '../../../hooks'
 import PriceArea from '../price/PriceArea'
-import TitleText from '../title'
+import TitleText from '../../title'
 import CartProductList from './CartProductList'
 import CouponArea from './CouponArea'
 import ProductList from './ProductList'
