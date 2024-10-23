@@ -39,6 +39,20 @@ export const getMaxApplicableDiscount = (item: CartItem) => {
   return discount ? discount.rate : 0;
 };
 
+const roundPrice = (price: number): number => {
+  return Math.round(price);
+}
+
+const applyCouponDiscount = (amount: number, coupon: Coupon | null): number => {
+  if (!coupon) return amount;
+
+  const discountCalculators = {
+    amount: (price: number, value: number) => Math.max(0, price - value),
+    percentage: (price: number, value: number) => price * (1 - value / 100),
+  }
+  return discountCalculators[coupon.discountType](amount, coupon.discountValue);
+}
+
 export const calculateCartTotal = (
   cart: CartItem[],
   selectedCoupon: Coupon | null
@@ -47,27 +61,16 @@ export const calculateCartTotal = (
     return total + item.product.price * item.quantity;
   }, 0);
 
-  let totalAfterDiscount = cart.reduce((total, item) => {
+  const totalAfterItemDiscounts = cart.reduce((total, item) => {
     return total + calculateItemTotal(item);
   }, 0);
 
-  let totalDiscount = totalBeforeDiscount - totalAfterDiscount;
+  const finalTotal = applyCouponDiscount(totalAfterItemDiscounts, selectedCoupon);
 
-  if (selectedCoupon) {
-    if (selectedCoupon.discountType === "amount") {
-      totalAfterDiscount = Math.max(
-        0,
-        totalAfterDiscount - selectedCoupon.discountValue
-      );
-    } else {
-      totalAfterDiscount *= 1 - selectedCoupon.discountValue / 100;
-    }
-    totalDiscount = totalBeforeDiscount - totalAfterDiscount;
-  }
   return {
-    totalBeforeDiscount: Math.round(totalBeforeDiscount),
-    totalAfterDiscount: Math.round(totalAfterDiscount),
-    totalDiscount: Math.round(totalDiscount),
+    totalBeforeDiscount: roundPrice(totalBeforeDiscount),
+    totalAfterDiscount: roundPrice(finalTotal),
+    totalDiscount: roundPrice(totalBeforeDiscount - finalTotal),
   };
 };
 
