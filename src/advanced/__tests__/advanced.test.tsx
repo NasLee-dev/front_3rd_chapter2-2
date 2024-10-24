@@ -18,6 +18,10 @@ import {
 import useAccordion from '../../refactoring/hooks/admin/useAccordion'
 import useCouponManagement from '../../refactoring/hooks/admin/useCouponManagement'
 import useProductManagement from '../../refactoring/hooks/admin/useProductManagement'
+import {
+  createProduct,
+  updateProductField,
+} from '../../refactoring/hooks/utils/adminUtils'
 
 const mockProducts: Product[] = [
   {
@@ -292,6 +296,36 @@ describe('advanced > ', () => {
     test('상품의 재고를 확인하는가', () => {
       const remainingStock = getRemainingStock(mockCartItem, mockProducts[0])
       expect(remainingStock).toBe(10)
+    })
+
+    test('관리자 페이지 유틸 함수(createProduct)가 잘 작동하는가', () => {
+      const newProduct = {
+        name: 'new product',
+        price: 100000,
+        stock: 100,
+        discounts: [],
+      }
+      const createdProduct = createProduct(newProduct)
+      expect(createdProduct).toEqual({
+        ...newProduct,
+        id: expect.any(String),
+      })
+    })
+
+    test('관리자 페이지 유틸 함수(updateProduct)가 잘 작동하는가', () => {
+      const updatedProduct = {
+        ...mockProducts[0],
+        name: 'updated product',
+      }
+      const updatedProductName = updateProductField(
+        updatedProduct,
+        'name',
+        'updated product',
+      )
+      expect(updatedProductName).toEqual({
+        ...mockProducts[0],
+        name: 'updated product',
+      })
     })
 
     test('관리자 페이지 아코디언 훅이 잘 작동하는가 ', () => {
