@@ -1,5 +1,13 @@
 import { useState } from 'react'
 import { Discount, Product } from '../../../types'
+import {
+  addDiscountToProduct,
+  createProduct,
+  getInitialDiscountState,
+  getInitialProductState,
+  removeDiscountFromProduct,
+  updateProductField,
+} from '../utils/adminUtils'
 
 interface IProductManagementProps {
   onProductUpdate: (updatedProduct: Product) => void
@@ -28,20 +36,14 @@ export default function useProductManagement({
   }
 
   const handleProductNameUpdate = (productId: string, newName: string) => {
-    if (editProduct && editProduct.id === productId) {
-      setEditProduct({
-        ...editProduct,
-        name: newName,
-      })
+    if (editProduct?.id === productId) {
+      setEditProduct(updateProductField(editProduct, 'name', newName))
     }
   }
 
   const handlePriceUpdate = (productId: string, newPrice: number) => {
-    if (editProduct && editProduct.id === productId) {
-      setEditProduct({
-        ...editProduct,
-        price: newPrice,
-      })
+    if (editProduct?.id === productId) {
+      setEditProduct(updateProductField(editProduct, 'price', newPrice))
     }
   }
 
@@ -53,42 +55,32 @@ export default function useProductManagement({
   }
 
   const handleStockUpdate = (productId: string, newStock: number) => {
-    if (editProduct && editProduct.id === productId) {
-      setEditProduct({ ...editProduct, stock: newStock })
+    if (editProduct?.id === productId) {
+      setEditProduct(updateProductField(editProduct, 'stock', newStock))
     }
   }
 
   const handleAddDiscount = (productId: string) => {
-    if (editProduct && editProduct.id === productId) {
-      const newProduct = {
-        ...editProduct,
-        discounts: [...editProduct.discounts, newDiscount],
-      }
-      onProductUpdate(newProduct)
-      setEditProduct(newProduct)
-      setNewDiscount({ quantity: 0, rate: 0 })
+    if (editProduct?.id === productId) {
+      const updatedProduct = addDiscountToProduct(editProduct, newDiscount)
+      onProductUpdate(updatedProduct)
+      setEditProduct(updatedProduct)
+      setNewDiscount(getInitialDiscountState())
     }
   }
 
   const handleRemoveDiscount = (productId: string, index: number) => {
-    if (editProduct && editProduct.id === productId) {
-      const newProduct = {
-        ...editProduct,
-        discounts: editProduct.discounts.filter((_, i) => i !== index),
-      }
-      onProductUpdate(newProduct)
-      setEditProduct(newProduct)
+    if (editProduct?.id === productId) {
+      const updatedProduct = removeDiscountFromProduct(editProduct, index)
+      onProductUpdate(updatedProduct)
+      setEditProduct(updatedProduct)
     }
   }
 
   const handleAddNewProduct = () => {
-    onProductAdd({ ...newProduct, id: `p${Date.now()}` })
-    setNewProduct({
-      name: '',
-      price: 0,
-      stock: 0,
-      discounts: [],
-    })
+    const createdProduct = createProduct(newProduct)
+    onProductAdd(createdProduct)
+    setNewProduct(getInitialProductState())
     setShowNewProductForm(false)
   }
 
